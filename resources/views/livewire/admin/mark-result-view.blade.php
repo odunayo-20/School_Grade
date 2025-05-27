@@ -1,10 +1,11 @@
 <div>
 
-<style>
-    th, td{
-        font-size: 12px;
-    }
-</style>
+    <style>
+        th,
+        td {
+            font-size: 12px;
+        }
+    </style>
 
     <form wire:submit.prevent="filterStudents">
         <div class="mb-3 row">
@@ -66,8 +67,7 @@
                         <th>Total (1st + 2nd + 3rd)</th>
                     @endif --}}
                     @if ($selectedSemester == 3)
-
-                    <th>Promotion Status</th>
+                        <th>Promotion Status</th>
                     @endif
                     <th>Action</th>
                 </tr>
@@ -83,135 +83,59 @@
                         @endphp
 
                         @foreach ($subjects as $subject)
+                        @php
+                        // Calculate total marks for this subject
+                        $CA = $results->where('student_id', $student->id)->where('subject_id', $subject->id)->where('type', 'CA')->sum('marks');
+                        $exam = $results->where('student_id', $student->id)->where('subject_id', $subject->id)->where('type', 'Exam')->sum('marks');
+
+                        // Calculate weighted percentage
+                        $subjectPercentage = 0;
+                        if ($CA + $exam > 0) {
+                            $subjectPercentage =
+                                ($CA/ 40) * 40 +
+                                ($exam / 60) * 60;
+                        }
+
+                        $totalPercentage += $subjectPercentage;
+                        $subjectCount++;
+                    @endphp
+
+                    <td>
+
+                        <div><strong>CA:</strong> {{ $CA }}/40</div>
+                        <div><strong>Exam:</strong> {{ $exam }}/60</div>
+
+                        @if ($selectedSemester == 3)
                             @php
-                                $subjectTotal = $this->calculateTotalMarks($student->id, $subject->id);
-                                $totalPercentage += $subjectTotal;
+                                $firstSem = \App\Models\Result::where('student_id', $student->id)->where('subject_id', $subject->id)->where('semester_id', 1)->where('schoolsession_id', $selectedSession)->sum('marks');
+                                $secondSem = \App\Models\Result::where('student_id', $student->id)->where('subject_id', $subject->id)->where('semester_id', 2)->where('schoolsession_id', $selectedSession)->sum('marks');
+                                $thirdSem = $exam + $CA;
 
-                                $firstSemTotal = 0;
-                                $secondSemTotal = 20;
-                                // If Semester 3 is selected, fetch marks directly from the database
-                                if ($selectedSemester == 3) {
-                                    $firstSemTotal = \App\Models\Result::where('student_id', $student->id)
-                                        ->where('subject_id', $subject->id)
-                                        ->where('semester_id', 1)
-                                        ->where('schoolsession_id', $selectedSession)
-                                        ->sum('marks');
-
-                                    $secondSemTotal = \App\Models\Result::where('student_id', $student->id)
-                                        ->where('subject_id', $subject->id)
-                                        ->where('semester_id', 2)
-                                        ->where('schoolsession_id', $selectedSession)
-                                        ->sum('marks');
-                                    $thirdSemTotal = \App\Models\Result::where('student_id', $student->id)
-                                        ->where('subject_id', $subject->id)
-                                        ->where('semester_id', 3)
-                                        ->where('schoolsession_id', $selectedSession)
-                                        ->sum('marks');
-
-                                    $overallTotal = $firstSemTotal + $secondSemTotal + $subjectTotal;
-                                }
+                                $finalTotal = $firstSem + $secondSem + $thirdSem;
+                                $finalAverage = $finalTotal / 3;
                             @endphp
-                            {{-- <td>{{ number_format($subjectTotal, 2) }}%</td> --}}
-
-                            @if ($selectedSemester == 3)
-                                {{-- <td><strong>{{ $firstSemTotal }}%</strong></td>
-                            <td><strong>{{ $secondSemTotal }}%</strong></td>
-                            <td><strong>{{ number_format($overallTotal, 2) }}%</strong></td> --}}
-                            @endif
-
+                            <div><strong>1st Sem:</strong> {{ number_format($firstSem, 2) }}</div>
+                            <div><strong>2nd Sem:</strong> {{ number_format($secondSem, 2) }}</div>
+                            <div><strong>3rd Sem:</strong> {{ number_format($thirdSem, 2) }}</div>
+                            <div><strong>Total Avg:</strong> {{ number_format($finalAverage, 2) }}%</div>
+                            <div><strong>Grade:</strong> {{ $this->calculateGrade($finalAverage) }}</div>
+                        @elseif ($selectedSemester == 2)
                             @php
-                                $overallAverage = $subjectCount > 0 ? $totalPercentage / $subjectCount : 0;
+                                $firstSem = \App\Models\Result::where('student_id', $student->id)->where('subject_id', $subject->id)->where('semester_id', 1)->where('schoolsession_id', $selectedSession)->sum('marks');
+                                $secondSem = $exam + $CA;
+
+                                $finalAverage = ($firstSem + $secondSem) / 2;
                             @endphp
+                            <div><strong>1st Sem:</strong> {{ number_format($firstSem, 2) }}</div>
+                            <div><strong>2nd Sem:</strong> {{ number_format($secondSem, 2) }}</div>
+                            <div><strong>Total Avg:</strong> {{ number_format($finalAverage, 2) }}%</div>
+                            <div><strong>Grade:</strong> {{ $this->calculateGrade($finalAverage) }}</div>
+                        @else
+                            <div><strong>Total Avg:</strong> {{ number_format($subjectPercentage, 2) }}%</div>
+                            <div><strong>Grade:</strong> {{ $this->calculateGrade($subjectPercentage) }}</div>
+                        @endif
+                    </td>
 
-
-
-                            <td>
-                                @php
-                                    // Get marks by category for this student and subject
-                                    $classWork = $results
-                                        ->where('student_id', $student->id)
-                                        ->where('subject_id', $subject->id)
-                                        ->where('type', 'Class Work')
-                                        ->sum('marks');
-
-                                    $homeWork = $results
-                                        ->where('student_id', $student->id)
-                                        ->where('subject_id', $subject->id)
-                                        ->where('type', 'Home Work')
-                                        ->sum('marks');
-
-                                    $testWork = $results
-                                        ->where('student_id', $student->id)
-                                        ->where('subject_id', $subject->id)
-                                        ->where('type', 'Test Work')
-                                        ->sum('marks');
-
-                                    $exam = $results
-                                        ->where('student_id', $student->id)
-                                        ->where('subject_id', $subject->id)
-                                        ->where('type', 'Exam')
-                                        ->sum('marks');
-
-                                    // Assume maximum possible marks for each category
-                                    $maxClassWork = 10;
-                                    $maxHomeWork = 10;
-                                    $maxTestWork = 20;
-                                    $maxExam = 60;
-
-                                    // Calculate weighted percentage for this subject
-                                    $subjectPercentage =
-                                        ($classWork / $maxClassWork) * 10 +
-                                        ($homeWork / $maxHomeWork) * 10 +
-                                        ($testWork / $maxTestWork) * 20 +
-                                        ($exam / $maxExam) * 60;
-
-                                    // Accumulate total for overall percentage calculation
-                                    $totalPercentage += $subjectPercentage;
-                                    $subjectCount++;
-                                @endphp
-
-                                <div><strong>Class Work:</strong> {{ $classWork }}/10</div>
-                                <div><strong>Home Work:</strong> {{ $homeWork }}/10</div>
-                                <div><strong>Test Work:</strong> {{ $testWork }}/20</div>
-
-
-
-
-                                {{-- <div><strong>Exam:</strong> {{ number_format($subjectTotal, 2) }}%</div> --}}
-                                <div><strong>Exam:</strong> {{ $exam }}/60</div>
-                                @if ($selectedSemester == 3)
-                                    <div><strong>First semester:</strong> {{ number_format($firstSemTotal, 2) }}%</div>
-                                    <div><strong>Second semester:</strong> {{ number_format($secondSemTotal, 2) }}%
-                                    </div>
-                                    <div><strong>Third semester:</strong> {{ number_format($thirdSemTotal, 2) }}%</div>
-                                    @php
-                                        $result = $firstSemTotal + $secondSemTotal + $thirdSemTotal;
-                                        $totalResult = $result / 3;
-                                    @endphp
-                                    <div><strong>Subject Total:</strong> {{ number_format($totalResult, 2) }}%</div>
-                                @else
-                                    <div><strong>Subject Total:</strong> {{ number_format($subjectPercentage , 2) }}%
-                                    </div>
-                                @endif
-
-                                @if ($selectedSemester == 3)
-
-                                @if ($totalResult >= 90) A+
-                                @elseif ($totalResult >= 80) A
-                                @elseif ($totalResult >= 70) B
-                                @elseif ($totalResult >= 60) C
-                                @elseif ($totalResult >= 50) D
-                                @elseif ($totalResult >= 40) E
-                                @else F
-                                @endif
-
-                                @else
-
-                                <div><strong>Grade:</strong> {{ $this->calculateGrade($subjectPercentage) }}</div>
-                                @endif
-
-
-                            </td>
                         @endforeach
 
                         @php
@@ -222,8 +146,9 @@
                         {{-- <td><strong>{{ number_format($overallAverage, 2) }}%</strong></td>
                         <td><strong>{{ $this->calculateGrade($overallAverage) }}</strong></td> --}}
                         @if ($selectedSemester == 3)
-
-                        <td><strong>{{ $this->determinePromotion($overallAverage) }}</strong></td>
+                            <td><strong>{{ $this->determinePromotion($overallAverage) }}</strong></td>
+                            {{-- @elseif ($selectedSemester == 2)
+                         <td><strong>{{ $this->determinePromotion($overallAverage) }}</strong></td> --}}
                         @endif
                         <td>
                             <button type="button" class="btn btn-sm btn-success"

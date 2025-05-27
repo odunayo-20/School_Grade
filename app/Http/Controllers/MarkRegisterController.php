@@ -19,4 +19,7 @@ class MarkRegisterController extends Controller
     public function pyschomotor(){
         return view('admin.pyschomotor.index');
     }
+    public function attendance(){
+        return view('admin.attendance.index');
+    }
 }

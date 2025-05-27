@@ -4,25 +4,24 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="createModalLabel">Add Resumption</h5>
+                <h5 class="modal-title" id="createModalLabel">Add Total Attendance</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form wire:submit.prevent="createResumption">
+                <form wire:submit.prevent="storeTotalAttendance">
                     <div class="mb-3">
                         <div class="form-group">
                             <label>Session</label>
-                            <select wire:model.defer="session" id="" class="form-select">
+                            <select wire:model.defer="session_id" id="" class="form-select">
                                 <option value="">--Select Session--</option>
-                                @forelse ($sessions as $session)
-                                    <option value="{{ $session->id }}">{{ $session->name }}</option>
+                                @forelse ($sessions as $value)
+                                    <option value="{{ $value->id }}">{{ $value->name }}</option>
 
                                 @empty
-                                    <option value="">--No Record--</option>
+                                    <option>No Record</option>
                                 @endforelse
-
                             </select>
-                            @error('session')
+                            @error('session_id')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
@@ -32,34 +31,32 @@
                             <label>Term</label>
                             <select wire:model.defer="semester" id="" class="form-select">
                                 <option value="">--Select Term--</option>
-                                @forelse ($semesters as $semester)
-                                    <option value="{{ $semester->id }}">{{ $semester->name }}</option>
+                                @forelse ($semesters as $value)
+                                    <option value="{{ $value->id }}">{{ $value->name }}</option>
 
                                 @empty
-                                    <option value="">--No Record--</option>
+                                    <option>No Record</option>
                                 @endforelse
-
                             </select>
                             @error('semester')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="">Vacation Date</label>
-                        <input type="date" wire:model.defer="vacation_date" class="form-control">
-                        @error('vacation_date')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label for="">Resumption Date</label>
-                        <input type="date" wire:model.defer="resumption_date" class="form-control">
-                        @error('resumption_date')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
 
+                    <div class="mb-3">
+                        <label for="">Total</label>
+                        <input type="number" wire:model.defer="total" class="form-control">
+                        @error('total')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="" class="checkbox-label">Status</label>
+                        <input type="checkbox" wire:model.defer="status" class="form-check-input"> <br>Checked=Hidden,
+                        Un-Checked=Visible
+
+                    </div>
             </div>
             <div class="modal-footer">
                 <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -71,13 +68,12 @@
 </div>
 <!-- Update brand -->
 
-
 <div wire:ignore.self class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel"
     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Resumption</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit TotalAttendance</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div wire:loading>
@@ -88,22 +84,22 @@
             </div>
 
             <div wire:loading.remove>
+
                 <div class="modal-body">
-                    <form wire:submit.prevent="updateResumption">
+                    <form wire:submit.prevent="updateTotalAttendance">
                         <div class="mb-3">
                             <div class="form-group">
                                 <label>Session</label>
-                                <select wire:model.defer="session" id="" class="form-select">
+                                <select wire:model.defer="session_id" id="" class="form-select">
                                     <option value="">--Select Session--</option>
-                                    @forelse ($sessions as $session)
-                                        <option value="{{ $session->id }}">{{ $session->name }}</option>
+                                    @forelse ($sessions as $value)
+                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
 
                                     @empty
-                                        <option value="">--No Record--</option>
+                                        <option>No Record</option>
                                     @endforelse
-
                                 </select>
-                                @error('session')
+                                @error('session_id')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -113,32 +109,31 @@
                                 <label>Term</label>
                                 <select wire:model.defer="semester" id="" class="form-select">
                                     <option value="">--Select Term--</option>
-                                    @forelse ($semesters as $semester)
-                                        <option value="{{ $semester->id }}">{{ $semester->name }}</option>
+                                    @forelse ($semesters as $value)
+                                        <option value="{{ $value->id }}">{{ $value->name }}</option>
 
                                     @empty
-                                        <option value="">--No Record--</option>
+                                        <option>No Record</option>
                                     @endforelse
-
                                 </select>
                                 @error('semester')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
+
                         <div class="mb-3">
-                            <label for="">Vacation Date</label>
-                            <input type="text" wire:model.defer="vacation_date" class="form-control">
-                            @error('vacation_date')
+                            <label for="">Total</label>
+                            <input type="number" wire:model.defer="total" class="form-control">
+                            @error('total')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
                         <div class="mb-3">
-                            <label for="">Resumption Date</label>
-                            <input type="text" wire:model.defer="resumption_date" class="form-control">
-                            @error('resumption_date')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
+                            <label for="" class="checkbox-label">Status</label>
+                            <input type="checkbox" wire:model.defer="status" class="form-check-input"> <br>Checked=Hidden,
+                            Un-Checked=Visible
+
                         </div>
 
                 </div>
@@ -158,14 +153,14 @@
     <div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete Subject</h5>
+                <h5 class="modal-title" id="deleteModalLabel">Delete Total Attendance</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div wire:loading class="spinner-border text-primary" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>Loading....
 
-            <form wire:submit.prevent='destroyResumption'>
+            <form wire:submit.prevent='destroyTotalAttendance'>
                 <div wire:loading.remove>
 
                     <div class="modal-body">

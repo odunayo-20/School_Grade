@@ -21,7 +21,8 @@ class Index extends Component
             'session' => 'required|string',
             'semester' => 'required|string',
             'resumption_date' => 'required|date',
-            'vacation_date' => 'required|date|after:resumption_date',
+            'vacation_date' => 'required|date',
+            // 'vacation_date' => 'required|date|after:resumption_date',
         ]);
 
         Resumption::create([
@@ -86,8 +87,8 @@ class Index extends Component
 
     public function render()
     {
-        $sessions = SchoolSession::get();
-        $semesters = Semester::get();
+        $sessions = SchoolSession::where('status', 0)->get();
+        $semesters = Semester::where('status', 0)->get();
         $resumptions = Resumption::get();
         return view('livewire.admin.resumption.index', compact(['sessions', 'semesters', 'resumptions']))->extends('layouts.auth-layout')->section('content');;
     }

@@ -15,6 +15,10 @@ Route::middleware(['guest'])->group( function (){
 
 
 Route::get('/', [AuthController::class, 'login'])->name('admin.login');
+Route::get('/forget', [AuthController::class, 'forget'])->name('admin.forget');
+Route::post('/forget/send', [AuthController::class, 'forgetSend'])->name('admin.forgetSend');
+Route::get('/reset-password/{token}/{email}', [AuthController::class, 'resetPassword'])->name('admin.resetPassword');
+Route::post('/reset/password/change', [AuthController::class, 'resetPasswordChange'])->name('admin.resetPasswordChange');
 Route::post('admin/login/confirm', [AuthController::class, 'loginConfirm'])->name('admin.loginConfirm');
 Route::get('admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
 });
@@ -47,6 +51,7 @@ Route::delete('/mark-result/{result}', [MarkRegisterController::class, 'destroy'
 Route::get('/mark-result/view', [MarkRegisterController::class, 'result_view'])->name('admin.markResult.result_view');
 Route::get('/affective', [MarkRegisterController::class, 'affective'])->name('admin.markResult.affective');
 Route::get('/pyschomotor', [MarkRegisterController::class, 'pyschomotor'])->name('admin.markResult.pyschomotor');
+Route::get('/attendance', [MarkRegisterController::class, 'attendance'])->name('admin.markResult.attendance');
 
 // Route::get('result-table', App\Livewire\Admin\ResultsTable::class)->name('admin.result-table');
 Route::get('subject', App\Livewire\Admin\Subject\Index::class)->name('admin.subject');
@@ -54,6 +59,7 @@ Route::get('resumption', App\Livewire\Admin\Resumption\Index::class)->name('admi
 Route::get('class', App\Livewire\Admin\Class\Index::class)->name('admin.class');
 Route::get('semester', App\Livewire\Admin\Semester\Index::class)->name('admin.semester');
 Route::get('session', App\Livewire\Admin\Sessions\Index::class)->name('admin.session');
+Route::get('total_attendances', App\Livewire\Admin\TotalAttendances\Index::class)->name('admin.total_attendances');
 
 Route::get('result-table', [ResultTableController::class, 'index'])->name('admin.result-table');
 // Route::get('subject', [SubjectController::class, 'index'])->name('admin.subject');

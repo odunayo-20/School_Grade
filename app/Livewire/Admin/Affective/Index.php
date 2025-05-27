@@ -37,9 +37,9 @@ public $students = [];
 
     public function mount()
     {
-        $this->classes = StudentClass::all();
-        $this->semesters = Semester::all();
-        $this->sessions = SchoolSession::all();
+        $this->classes = StudentClass::where('status', 0)->get();
+        $this->semesters = Semester::where('status', 0)->get();
+        $this->sessions = SchoolSession::where('status', 0)->get();
     }
 
     public function updatedSelectedClass()

@@ -13,6 +13,7 @@
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
+
             <div class="col-md-3">
                 <select wire:model="selectedSession" class="form-select">
                     <option value="">Select Session</option>
@@ -21,8 +22,8 @@
                     @endforeach
                 </select>
                 @error('selectedSession')
-                <span class="text-danger">{{ $message }}</span>
-            @enderror
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
             </div>
 
             <div class="col-md-3">
@@ -33,8 +34,8 @@
                     @endforeach
                 </select>
                 @error('selectedSemester')
-                <span class="text-danger">{{ $message }}</span>
-            @enderror
+                    <span class="text-danger">{{ $message }}</span>
+                @enderror
             </div>
 
             <div class="col-md-3">
@@ -45,52 +46,56 @@
     </form>
 
     @if ($students)
-    <h3>Results:</h3>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Student Name</th>
-                @foreach ($subjects as $subject)
-                    <th>{{ $subject->name }}</th>
-                @endforeach
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($students as $student)
-            <tr>
-                <td>{{ $student->first_name }} {{ $student->last_name }}</td>
-                @foreach ($subjects as $subject)
-                <td>
-                    @foreach (['Class Work', 'Home Work', 'Test Work', 'Exam'] as $workType)
-                    <div style="margin-bottom: 10px;">
-                        {{ $workType }}
-                        <input type="text" style="width: 100px;" placeholder="Enter Marks"
-                            wire:model.defer="marks.{{ $student->id }}.{{ $subject->id }}.{{ $workType }}"
-                            class="form-control">
-                        @error("marks.{$student->id}.{$subject->id}.{$workType}")
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
+        <h3>Results:</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    @foreach ($subjects as $subject)
+                        <th>{{ $subject->name }}</th>
                     @endforeach
-                </td>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($students as $student)
+                    <tr>
+                        <td>{{ $student->first_name }} {{ $student->last_name }}</td>
+                        @foreach ($subjects as $subject)
+                            <td>
+                                @foreach (['CA', 'Exam'] as $workType)
+                                    <div style="margin-bottom: 10px;" wire:key="mark-{{ $student->id }}-{{ $subject->id }}-{{ $workType }}">
+                                        {{ $workType }}
+                                        <input
+                                            type="number"
+                                            name="marks[{{ $student->id }}][{{ $subject->id }}][{{ $workType }}]"
+                                            style="width: 100px;"
+                                            placeholder="Enter Marks"
+                                            wire:model.defer="marks.{{ $student->id }}.{{ $subject->id }}.{{ $workType }}"
+                                            class="form-control"
+                                            min="0" max="100"
+                                        >
+                                        @error("marks.{$student->id}.{$subject->id}.{$workType}")
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                @endforeach
+                            </td>
+                        @endforeach
+                        <td>
+                            <button type="button" class="btn btn-primary" wire:click="saveStudentMarks({{ $student->id }})">
+                                Save
+                            </button>
+                        </td>
+                    </tr>
                 @endforeach
-                <td>
-                    <button type="button" class="btn btn-primary" wire:click="saveStudentMarks({{ $student->id }})">
-                        Save
-                    </button>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </tbody>
+        </table>
 
-    <div class="mt-3 text-end">
-        <button type="button" class="btn btn-success" wire:click="saveAllMarks">Save All</button>
-    </div>
+        <div class="mt-3 text-end">
+            <button type="button" class="btn btn-success" wire:click="saveAllMarks">Save All</button>
+        </div>
     @endif
-
-
 
     <!-- Flash Messages -->
     @if (session()->has('success'))

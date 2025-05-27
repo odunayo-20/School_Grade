@@ -37,7 +37,7 @@
                                                 <select name="class_id" id="" class="form-select">
                                                     <option value="">--Select Class--</option>
                                                     @foreach ($classes as $class)
-                                                        <option value="{{ $class->id }}">{{ $class->name }}</option>
+                                                        <option  value="{{ $class->id }}">{{ $class->name }}</option>
                                                     @endforeach
                                                 </select>
                                                 @error('class_id')
@@ -47,7 +47,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label>Semester</label>
+                                                <label>Session</label>
                                                 <select name="schoolSession_id" id="" class="form-select">
                                                     <option value="">--Select Academic session--</option>
                                                     @foreach ($schoolSessions as $session)

@@ -2,16 +2,18 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Affective;
-use App\Models\Pyschomotor;
 use App\Models\Result;
-use App\Models\Resumption;
-use App\Models\SchoolSession;
 use App\Models\Student;
 use App\Models\Subject;
 use Livewire\Component;
 use App\Models\Semester;
+use App\Models\Affective;
+use App\Models\Attendance;
+use App\Models\Resumption;
+use App\Models\Pyschomotor;
 use App\Models\StudentClass;
+use App\Models\SchoolSession;
+use App\Models\TotalAttendance;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class MarkResultView extends Component
@@ -26,7 +28,7 @@ class MarkResultView extends Component
     public $selectedClass = null;
     public $selectedSemester = null;
     public $selectedSession = null;
-    public $marks = [];
+    public $marks = [], $totals;
 
     public function mount()
     {
@@ -56,6 +58,8 @@ class MarkResultView extends Component
         if ($this->selectedClass && $this->selectedSession) {
             $this->students = Student::where('class_id', $this->selectedClass)->where('schoolsession_id', $this->selectedSession)->get();
 
+            $this->totals = TotalAttendance::where('schoolsession_id', $this->selectedSession)->where('semester_id', $this->selectedSemester)->first();
+
             $this->subjects = Subject::where('class_id', $this->selectedClass)->get();
 
             // Fetch results for all students in this class and semester
@@ -75,19 +79,17 @@ class MarkResultView extends Component
 
     public function calculateGrade($marks)
 {
-    if ($marks >= 90) {
-        return 'A+';
-    } elseif ($marks >= 80) {
+ if ($marks >= 70) {
         return 'A';
-    } elseif ($marks >= 70) {
-        return 'B';
     } elseif ($marks >= 60) {
-        return 'C';
+        return 'B';
     } elseif ($marks >= 50) {
+        return 'C';
+    } elseif ($marks >= 45) {
         return 'D';
     } elseif ($marks >= 40) {
         return 'E';
-    } else {
+    }else {
         return 'F';
     }
 }
@@ -105,7 +107,7 @@ public function loadMarks()
 {
     foreach ($this->students as $student) {
         foreach ($this->subjects as $subject) {
-            foreach (['Class Work', 'Home Work', 'Test Work', 'Exam'] as $type) {
+            foreach (['CA', 'Exam'] as $type) {
                 $existingMark = Result::where([
                     'student_id'  => $student->id,
                     'subject_id'  => $subject->id,
@@ -147,6 +149,10 @@ public function calculateTotalMarks($studentId, $subjectId)
         $selectedSemester = $this->selectedSemester;
         $selectedSession = $this->selectedSession;
 
+        if ($this->selectedClass && $this->selectedSession) {
+            $this->totals = TotalAttendance::where('schoolsession_id', $this->selectedSession)->where('semester_id', $this->selectedSemester)->first();
+            $total_attendances = Attendance::where('student_id', $studentId)->where('schoolsession_id', $this->selectedSession)->where('semester_id', $this->selectedSemester)->first();
+        }
         // Fetch only relevant results
         $results = Result::where('student_id', $studentId)
             ->where('schoolsession_id', $selectedSession)
@@ -163,6 +169,11 @@ public function calculateTotalMarks($studentId, $subjectId)
         $resumption = Resumption::latest()->where('schoolsession_id', $selectedSession)
             ->where('semester_id', $selectedSemester)
             ->first();
+            $allStudents = Student::where('class_id', $student->class_id)
+            ->where('schoolsession_id', $selectedSession)
+            ->get();
+
+            
 
         $data = [
             'resumption' => $resumption,
@@ -173,6 +184,9 @@ public function calculateTotalMarks($studentId, $subjectId)
             'results' => $results,
             'selectedSemester' => $selectedSemester,
             'selectedSession' => $selectedSession,
+            'total_attendances' => $total_attendances,
+            'totals' => $this->totals,
+            'allStudents' => $allStudents,
         ];
 
         $pdf = PDF::loadView('livewire.admin.student-result', $data);
@@ -182,6 +196,8 @@ public function calculateTotalMarks($studentId, $subjectId)
             "{$student->first_name}_{$student->last_name}_Result.pdf"
         );
     }
+
+
 
 
 

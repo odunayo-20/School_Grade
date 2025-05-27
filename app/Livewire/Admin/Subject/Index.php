@@ -73,15 +73,10 @@ public function destroySubject(){
     $this->dispatch('close-modal');
 }
 
-// public function mount(){
-
-//     $this->classes = StudentClass::get();
-//     // $this->subjects = Subject::get();
-// }
 
     public function render()
     {
-        $classes = StudentClass::get();
+        $classes = StudentClass::where('status', 0)->get();
 
         $subjects = Subject::get();
         return view('livewire.admin.subject.index', compact(['subjects', 'classes']))->extends('layouts.auth-layout')->section('content');

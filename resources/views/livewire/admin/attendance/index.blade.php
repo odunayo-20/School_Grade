@@ -1,0 +1,98 @@
+<div>
+    <!-- Filter Form -->
+    <form wire:submit.prevent="filterStudents">
+        <div class="mb-3 row">
+            <div class="col-md-3">
+                <label class="form-label">Class</label>
+                <select wire:model="selectedClass" class="form-select">
+                    <option value="">Select Class</option>
+                    @foreach ($classes as $class)
+                        <option value="{{ $class->id }}">{{ $class->name }}</option>
+                    @endforeach
+                </select>
+                @error('selectedClass') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Session</label>
+                <select wire:model="selectedSession" class="form-select">
+                    <option value="">Select Session</option>
+                    @foreach ($sessions as $session)
+                        <option value="{{ $session->id }}">{{ $session->name }}</option>
+                    @endforeach
+                </select>
+                @error('selectedSession') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label">Semester</label>
+                <select wire:model="selectedSemester" class="form-select">
+                    <option value="">Select Semester</option>
+                    @foreach ($semesters as $semester)
+                        <option value="{{ $semester->id }}">{{ $semester->name }}</option>
+                    @endforeach
+                </select>
+                @error('selectedSemester') <span class="text-danger">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="gap-2 col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Search</button>
+                <button type="reset" class="btn btn-danger" wire:click="resetFields">Reset</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Flash Messages -->
+    @if (session()->has('success'))
+        <div class="mt-2 alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    @if (session()->has('error'))
+        <div class="mt-2 alert alert-danger">{{ session('error') }}</div>
+    @endif
+
+    <!-- Students Result Table -->
+    @if (count($students) > 0)
+        <h3 class="mt-4">Results</h3>
+
+        @if ($totals)
+            <p class="fw-bold fs-5">Times School Opened: {{ $totals->total }}</p>
+        @endif
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Present</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($students as $student)
+                    <tr>
+                        <td>{{ $student->first_name }} {{ $student->last_name }}</td>
+                        <td>
+                            <input type="text" class="form-control" style="width: 100px;" placeholder="Enter Marks"
+                                   wire:model.defer="marks.{{ $student->id }}.Present">
+                            @error("marks.{$student->id}.Present")
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary"
+                                    wire:click="saveStudentMarks({{ $student->id }})">
+                                Save
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        <div class="mt-3 text-end">
+            <button type="button" class="btn btn-success" wire:click="saveAllMarks">Save All</button>
+        </div>
+    @else
+        <p class="mt-4 text-center text-muted">No students found. Please select a class, session, and semester.</p>
+    @endif
+</div>

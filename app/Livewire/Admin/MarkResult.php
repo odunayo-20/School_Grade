@@ -23,9 +23,9 @@ class MarkResult extends Component
     public $selectedSession = null;
     public $marks = [];
 
-    protected $rules = [
-        'marks.*.*.*' => 'required|numeric|min:0|max:100',
-    ];
+    // protected $rules = [
+    //     'marks.*.*.*' => 'required|numeric|min:0|max:100',
+    // ];
 
     protected $messages = [
         'marks.*.*.*.required' => 'Mark is required for all fields.',
@@ -36,9 +36,9 @@ class MarkResult extends Component
 
     public function mount()
     {
-        $this->classes = StudentClass::all();
-        $this->semesters = Semester::all();
-        $this->sessions = SchoolSession::all();
+        $this->classes = StudentClass::where('status', 0)->get();
+        $this->semesters = Semester::where('status', 0)->get();
+        $this->sessions = SchoolSession::where('status', 0)->get();
     }
 
     public function updatedSelectedClass()
@@ -75,7 +75,8 @@ class MarkResult extends Component
     {
         foreach ($this->students as $student) {
             foreach ($this->subjects as $subject) {
-                foreach (['Class Work', 'Home Work', 'Test Work', 'Exam'] as $type) {
+                // foreach (['Class Work', 'Home Work', 'Test Work', 'Exam'] as $type) {
+                foreach (['CA', 'Exam'] as $type) {
                     $existingMark = Result::where([
                         'student_id'  => $student->id,
                         'subject_id'  => $subject->id,
@@ -90,43 +91,84 @@ class MarkResult extends Component
         }
     }
 
+    // public function saveStudentMarks($studentId)
+    // {
+    //     $this->validate();
+    //     dd('ddddddd');
+
+    //     if (!isset($this->marks[$studentId])) {
+    //         session()->flash('error', 'No marks entered for this student.');
+    //         return;
+    //     }
+
+    //     foreach ($this->marks[$studentId] as $subjectId => $markTypes) {
+    //         foreach ($markTypes as $type => $mark) {
+    //             Result::updateOrCreate(
+    //                 [
+    //                     'student_id'  => $studentId,
+    //                     'subject_id'  => $subjectId,
+    //                     'semester_id' => $this->selectedSemester,
+    //                     'schoolSession_id' => $this->selectedSession,
+    //                     'type'        => $type,
+    //                 ],
+    //                 ['marks' => $mark]
+    //             );
+    //         }
+    //     }
+
+    //     session()->flash('success', 'Marks saved successfully!');
+    // }
+
+    // public function saveAllMarks()
+    // {
+    //     $this->validate();
+
+    //     foreach ($this->students as $student) {
+    //         $this->saveStudentMarks($student->id);
+    //     }
+
+    //     session()->flash('success', 'All marks saved successfully!');
+    // }
+
+
     public function saveStudentMarks($studentId)
-    {
-        $this->validate();
-
-        if (!isset($this->marks[$studentId])) {
-            session()->flash('error', 'No marks entered for this student.');
-            return;
-        }
-
-        foreach ($this->marks[$studentId] as $subjectId => $markTypes) {
-            foreach ($markTypes as $type => $mark) {
-                Result::updateOrCreate(
-                    [
-                        'student_id'  => $studentId,
-                        'subject_id'  => $subjectId,
-                        'semester_id' => $this->selectedSemester,
-                        'schoolSession_id' => $this->selectedSession,
-                        'type'        => $type,
-                    ],
-                    ['marks' => $mark]
-                );
-            }
-        }
-
-        session()->flash('success', 'Marks saved successfully!');
+{
+    if (!isset($this->marks[$studentId])) {
+        session()->flash('error', 'No marks entered for this student.');
+        return;
     }
 
-    public function saveAllMarks()
-    {
-        $this->validate();
+    foreach ($this->marks[$studentId] as $subjectId => $markTypes) {
+        foreach ($markTypes as $type => $mark) {
+            $this->validate([
+                "marks.$studentId.$subjectId.$type" => 'required|numeric|min:0|max:100'
+            ], $this->messages);
 
-        foreach ($this->students as $student) {
-            $this->saveStudentMarks($student->id);
+            Result::updateOrCreate(
+                [
+                    'student_id'        => $studentId,
+                    'subject_id'        => $subjectId,
+                    'semester_id'       => $this->selectedSemester,
+                    'schoolSession_id'  => $this->selectedSession,
+                    'type'              => $type,
+                ],
+                ['marks' => $mark]
+            );
         }
-
-        session()->flash('success', 'All marks saved successfully!');
     }
+
+    session()->flash('success', 'Marks saved successfully!');
+}
+
+public function saveAllMarks()
+{
+    foreach ($this->students as $student) {
+        $this->saveStudentMarks($student->id);
+    }
+
+    session()->flash('success', 'All marks saved successfully!');
+}
+
 
     public function resetFields()
     {

@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Livewire\Admin\Pyschomotor;
+namespace App\Livewire\Admin\Attendance;
 
 use App\Models\Student;
-use Livewire\Component;
 use App\Models\Semester;
-use App\Models\Affective;
-use App\Models\Pyschomotor;
+use App\Models\Attendance;
+use Livewire\Component;
 use App\Models\StudentClass;
 use App\Models\SchoolSession;
+use App\Models\TotalAttendance;
 
 class Index extends Component
 {
-
     public $students = [];
     public $classes;
     public $semesters;
@@ -22,16 +21,17 @@ class Index extends Component
     public $selectedSemester = null;
     public $selectedSession = null;
     public $marks = [];
+    public $totals;
 
     protected $rules = [
-        'marks.*.*' => 'required|numeric|min:0|max:100',
+        'marks.*.*' => 'required|numeric|min:0|max:1000',
     ];
 
     protected $messages = [
         'marks.*.*.required' => 'Mark is required for all fields.',
         'marks.*.*.numeric'  => 'Mark must be a number.',
         'marks.*.*.min'      => 'Mark cannot be less than 0.',
-        'marks.*.*.max'      => 'Mark cannot exceed 100.',
+        'marks.*.*.max'      => 'Mark cannot exceed 1000.',
     ];
 
     public function mount()
@@ -53,68 +53,62 @@ class Index extends Component
 
     public function filterStudents()
     {
-
         $this->validate([
             'selectedClass' => 'required',
             'selectedSession' => 'required',
             'selectedSemester' => 'required',
         ]);
 
-        if ($this->selectedClass && $this->selectedSession) {
-            $this->students = Student::where('class_id', $this->selectedClass)->where('schoolsession_id', $this->selectedSession)->get();
-            $this->loadMarks();
-        } else {
-            $this->students = [];
-            $this->marks = [];
-        }
+        $this->students = Student::where('class_id', $this->selectedClass)
+            ->where('schoolsession_id', $this->selectedSession)
+            ->get();
+
+        $this->totals = TotalAttendance::where('schoolsession_id', $this->selectedSession)
+            ->where('semester_id', $this->selectedSemester)
+            ->first();
+
+        $this->loadMarks();
     }
-
-
 
     public function loadMarks()
-{
-    foreach ($this->students as $student) {
-        foreach (['Legibility', 'Dexterity', 'Handing of Tools', 'Accuracy', 'Sports and Games', 'Physical Activity', 'Musical Skills', 'Drawing / Painiting'] as $type) {
-            $existingMark = Pyschomotor::where([
-                'student_id'  => $student->id,
-                'semester_id' => $this->selectedSemester,
-                'schoolSession_id' => $this->selectedSession,
-                'type'        => $type,
-            ])->first();
+    {
+        foreach ($this->students as $student) {
+            foreach (['Present'] as $type) {
+                $existingMark = Attendance::where([
+                    'student_id' => $student->id,
+                    'semester_id' => $this->selectedSemester,
+                    'schoolsession_id' => $this->selectedSession,
+                    'type' => $type,
+                ])->first();
 
-            $this->marks[$student->id][$type] = $existingMark ? $existingMark->marks : null;
+                $this->marks[$student->id][$type] = $existingMark ? $existingMark->marks : null;
+            }
         }
     }
-}
-
-
-
-
 
     public function saveStudentMarks($studentId)
-{
-    $this->validate();
+    {
+        $this->validate();
 
-    if (!isset($this->marks[$studentId])) {
-        session()->flash('error', 'No marks entered for this student.');
-        return;
+        if (!isset($this->marks[$studentId])) {
+            session()->flash('error', 'No marks entered for this student.');
+            return;
+        }
+
+        foreach ($this->marks[$studentId] as $type => $mark) {
+            Attendance::updateOrCreate(
+                [
+                    'student_id' => $studentId,
+                    'semester_id' => $this->selectedSemester,
+                    'schoolsession_id' => $this->selectedSession,
+                    'type' => $type,
+                ],
+                ['marks' => $mark]
+            );
+        }
+
+        session()->flash('success', 'Marks saved successfully!');
     }
-
-    foreach ($this->marks[$studentId] as $type => $mark) {
-        Pyschomotor::updateOrCreate(
-            [
-                'student_id'  => $studentId,
-                'semester_id' => $this->selectedSemester,
-                'schoolsession_id' => $this->selectedSession,
-                'type'        => $type,
-            ],
-            ['marks' => $mark]
-        );
-    }
-
-    session()->flash('success', 'Marks saved successfully!');
-}
-
 
     public function saveAllMarks()
     {
@@ -136,9 +130,8 @@ class Index extends Component
         $this->marks = [];
     }
 
-
     public function render()
     {
-        return view('livewire.admin.pyschomotor.index');
+        return view('livewire.admin.attendance.index');
     }
 }

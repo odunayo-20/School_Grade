@@ -26,7 +26,7 @@ class Index extends Component
             'status' => $this->status == true ? '1': '0',
         ]);
 
-        session()->flash('success', 'Semester Successfully Created');
+        session()->flash('success', 'Term Successfully Created');
         $this->reset();
 
         $this->dispatch('close-modal');
@@ -58,7 +58,7 @@ class Index extends Component
             'status' => $this->status == true ? '1' : '0',
         ]);
 
-        session()->flash('success', 'Semester Successfully Updated');
+        session()->flash('success', 'Term Successfully Updated');
         $this->reset();
         $this->dispatch('close-modal');
     }
@@ -71,7 +71,7 @@ class Index extends Component
     public function destroySemester()
     {
         Semester::findOrFail($this->semester)->delete();
-        session()->flash('success', 'Semester Successfully Deleted');
+        session()->flash('success', 'Term Successfully Deleted');
         $this->reset();
         $this->dispatch('close-modal');
     }

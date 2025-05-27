@@ -37,8 +37,8 @@ class ResultsTable extends Component
     public function render()
     {
         return view('livewire.admin.results-table', [
-            'students' => Student::all(),
-            'subjects' => Subject::all(),
+            'students' => Student::where('status', 0)->get(),
+            'subjects' => Subject::where('status', 0)->get(),
             'results' => Result::get(),
         ]);
     }

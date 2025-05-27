@@ -1,5 +1,5 @@
 <div>
-    @section('title', 'Semester')
+    @section('title', 'Term')
 
     @include('livewire.admin.semester.semester-modal')
             <!-- Modal -->
@@ -17,9 +17,9 @@
                               <div class="card">
                                 <div class="card-header">
                                     <div class="w-100">
-                                        <h4 style="float: left; width:50%; display:inline;">Semester Details</h4>
+                                        <h4 style="float: left; width:50%; display:inline;">Term Details</h4>
                                         <h4 style="float: right; width:50%; display:inline; text-align: right" >
-                                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">Create</a>
+                                            <button href="#" class="btn btn-primary" disabled data-bs-toggle="modal" data-bs-target="#createModal">Create</button>
                                         </h4>
                                     </div>
 
@@ -42,9 +42,10 @@
                                                 <td>{{$value->slug}}</td>
                                                 <td>{{$value->status == '1' ? 'hidden' : 'visible'}}</td>
                                                 <td>
-                                                    <a href="#" wire:click='editSemester({{ $value->id }})' class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal">Edit</a>
-                                                    <a href="#"  wire:click='deleteSemester({{ $value->id }})' class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">Del</a>
+                                                    <button href="#" wire:click='editSemester({{ $value->id }})' class="btn btn-sm btn-primary" disabled data-bs-toggle="modal" data-bs-target="#editModal">Edit</button>
+                                                    <button href="#"  wire:click='deleteSemester({{ $value->id }})' style="display: dis" class="btn btn-sm btn-danger" disabled data-bs-toggle="modal" data-bs-target="#deleteModal">Del</button>
                                                 </td>
+
                                             </tr>
                                         @empty
 
