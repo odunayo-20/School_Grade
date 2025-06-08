@@ -467,7 +467,7 @@ $studentRank = isset($positionMap[$student->id]) ? ordinal($positionMap[$student
         </div>
         <div class="signature-box">
             <div>_____________________________</div>
-            <div style="font-size:12px; margin-bottom:5px;">Staff's Signature</div>
+            <div style="font-size:12px; margin-bottom:5px;">Class Teacher Signature</div>
         </div>
         <div class="signature-bo">
             <span style="font-size:12px;">Principal’s Comment</span>

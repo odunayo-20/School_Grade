@@ -27,7 +27,6 @@
             <li><a class="nav-link" href="{{route('admin.markResult.result_view')}}">View</a></li>
             <li><a class="nav-link" href="{{route('admin.markResult.affective')}}">Affective</a></li>
             <li><a class="nav-link" href="{{route('admin.markResult.pyschomotor')}}">Pyschomotor</a></li>
-            <li><a class="nav-link" href="{{route('admin.markResult.attendance')}}">Attendance</a></li>
           </ul>
         </li>
         <li class="dropdown">

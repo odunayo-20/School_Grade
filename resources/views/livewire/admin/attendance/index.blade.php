@@ -25,9 +25,9 @@
             </div>
 
             <div class="col-md-3">
-                <label class="form-label">Semester</label>
+                <label class="form-label">Term</label>
                 <select wire:model="selectedSemester" class="form-select">
-                    <option value="">Select Semester</option>
+                    <option value="">Select Term</option>
                     @foreach ($semesters as $semester)
                         <option value="{{ $semester->id }}">{{ $semester->name }}</option>
                     @endforeach
