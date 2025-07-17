@@ -59,7 +59,7 @@ class Index extends Component
             'selectedSemester' => 'required',
         ]);
 
-        $this->students = Student::where('class_id', $this->selectedClass)
+        $this->students = Student::where('current_class_id', $this->selectedClass)
             ->where('schoolsession_id', $this->selectedSession)
             ->get();
 

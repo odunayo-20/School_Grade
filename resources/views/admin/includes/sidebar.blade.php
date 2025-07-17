@@ -44,6 +44,8 @@
 
           <a href="{{route('admin.session')}}" class="nav-link"><i data-feather="mail"></i><span>Session</span></a>
           <a href="{{route('admin.subject')}}" class="nav-link"><i data-feather="mail"></i><span>Subject</span></a>
+          <a href="{{route('admin.circular')}}" class="nav-link"><i data-feather="mail"></i><span>Circular</span></a>
+          <a href="{{route('admin.past-question')}}" class="nav-link"><i data-feather="mail"></i><span>Past Question</span></a>
 
         </li>
 

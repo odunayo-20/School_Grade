@@ -29,7 +29,6 @@
                                     <table class="table table-striped table-hover" id="save-stage" style="width:100%;">
                                       <thead>
                                         <tr>
-                                          <th>Class</th>
                                           <th>Name</th>
                                           <th>Code</th>
                                           <th>Status</th>
@@ -39,7 +38,6 @@
                                      <tbody>
                                         @forelse ($subjects as $value)
                                             <tr>
-                                                <td>{{$value->class->name}}</td>
                                                 <td>{{$value->name}}</td>
                                                 <td>{{$value->code}}</td>
                                                 <td>{{$value->status == '1' ? 'hidden' : 'visible'}}</td>

@@ -70,7 +70,7 @@
             <tbody>
                 @foreach ($students as $student)
                     <tr>
-                        <td>{{ $student->first_name }} {{ $student->last_name }}</td>
+                        <td>{{ $student->firstname }} {{ $student->lastname }}</td>
                         <td>
                             <input type="text" class="form-control" style="width: 100px;" placeholder="Enter Marks"
                                    wire:model.defer="marks.{{ $student->id }}.Present">

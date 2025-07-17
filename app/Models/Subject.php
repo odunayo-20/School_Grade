@@ -20,8 +20,12 @@ public function students(){
     return $this->hasMany(Student::class);
 }
 
-public function class(){
-    return $this->belongsTo(StudentClass::class, 'class_id');
+public function classes()
+{
+    return $this->belongsToMany(StudentClass::class, 'assign_subjects', 'subject_id', 'class_id');
 }
+
+
+
 
 }

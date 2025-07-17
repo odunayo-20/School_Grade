@@ -9,6 +9,7 @@ use Livewire\Component;
 use App\Models\Semester;
 use App\Models\Affective;
 use App\Models\Attendance;
+use App\Models\ExternalAssignSubject;
 use App\Models\Resumption;
 use App\Models\Pyschomotor;
 use App\Models\StudentClass;
@@ -56,12 +57,12 @@ class MarkResultView extends Component
             'selectedSemester' => 'required',
         ]);
         if ($this->selectedClass && $this->selectedSession) {
-            $this->students = Student::where('class_id', $this->selectedClass)->where('schoolsession_id', $this->selectedSession)->get();
+            $this->students = Student::where('current_class_id', $this->selectedClass)->where('schoolsession_id', $this->selectedSession)->get();
 
             $this->totals = TotalAttendance::where('schoolsession_id', $this->selectedSession)->where('semester_id', $this->selectedSemester)->first();
 
-            $this->subjects = Subject::where('class_id', $this->selectedClass)->get();
-
+            // $this->subjects = Subject::where('class_id', $this->selectedClass)->get();
+            $this->subjects = ExternalAssignSubject::where('class_id', $this->selectedClass)->get();
             // Fetch results for all students in this class and semester
             // $studentIds = $this->students->pluck('id')->toArray();
             $this->results = Result::
@@ -142,8 +143,8 @@ public function calculateTotalMarks($studentId, $subjectId)
         $student = Student::findOrFail($studentId);
 
 
-       $subjects = Subject::where('class_id', $student->class->id)->get();
-
+    //    $subjects = Subject::where('class_id', $student->class->id)->get();
+       $subjects = ExternalAssignSubject::where('class_id', $this->selectedClass)->get();
         // Use Livewire properties
         $selectedClass = $this->selectedClass;
         $selectedSemester = $this->selectedSemester;
@@ -155,7 +156,7 @@ public function calculateTotalMarks($studentId, $subjectId)
         }
         // Fetch only relevant results
         $results = Result::where('student_id', $studentId)
-            ->where('schoolsession_id', $selectedSession)
+            // ->where('schoolsession_id', $selectedSession)
             ->whereIn('subject_id', $subjects->pluck('id'))
             ->get();
         $affectives = Affective::where('student_id', $studentId)
@@ -169,11 +170,11 @@ public function calculateTotalMarks($studentId, $subjectId)
         $resumption = Resumption::latest()->where('schoolsession_id', $selectedSession)
             ->where('semester_id', $selectedSemester)
             ->first();
-            $allStudents = Student::where('class_id', $student->class_id)
+            $allStudents = Student::where('current_class_id', $student->class_id)
             ->where('schoolsession_id', $selectedSession)
             ->get();
 
-            
+
 
         $data = [
             'resumption' => $resumption,

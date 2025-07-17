@@ -14,8 +14,8 @@
                                 <div class="card-header">
                                     <div class="w-100">
                                         <h4 style="float: left; width:50%; display:inline;">Result</h4>
-                                        <h4 style="float: right; width:50%; display:inline; text-align: right" >
-                                            <a href="{{route('admin.result')}}" class="btn btn-danger">Back</a>
+                                        <h4 style="float: right; width:50%; display:inline; text-align: right">
+                                            <a href="{{ route('admin.result') }}" class="btn btn-danger">Back</a>
                                         </h4>
                                     </div>
 
@@ -25,7 +25,8 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Registration No</label>
-                                                <input type="text" value="{{old('register_number')}}" name="register_number" class="form-control">
+                                                <input type="text" value="{{ old('register_number') }}"
+                                                    name="register_number" class="form-control">
                                                 @error('register_number')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -54,7 +55,8 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>First Name</label>
-                                                <input type="text" value="{{old('first_name')}}" name="first_name" class="form-control">
+                                                <input type="text" value="{{ old('first_name') }}" name="first_name"
+                                                    class="form-control">
                                                 @error('first_name')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -63,7 +65,8 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Last Name</label>
-                                                <input type="text" value="{{old('last_name')}}" name="last_name" class="form-control">
+                                                <input type="text" value="{{ old('last_name') }}" name="last_name"
+                                                    class="form-control">
                                                 @error('last_name')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -72,7 +75,8 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Other Name</label>
-                                                <input type="text" value="{{old('other_name')}}" name="other_name" class="form-control">
+                                                <input type="text" value="{{ old('other_name') }}" name="other_name"
+                                                    class="form-control">
                                                 @error('other_name')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -86,7 +90,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Email</label>
-                                                <input type="text" value="{{old('email')}}" name="email" class="form-control">
+                                                <input type="text" value="{{ old('email') }}" name="email"
+                                                    class="form-control">
                                                 @error('email')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -95,7 +100,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Phone</label>
-                                                <input type="number" value="{{old('phone')}}" name="phone" class="form-control">
+                                                <input type="number" value="{{ old('phone') }}" name="phone"
+                                                    class="form-control">
                                                 @error('phone')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -106,7 +112,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="">Status</label>
-                                            <input type="checkbox" value="{{old('status')}}" name="status"
+                                            <input type="checkbox" value="{{ old('status') }}" name="status"
                                                 class="form-input-check form-input-check-lg">
                                         </div>
                                     </div>
@@ -126,11 +132,80 @@
     </div>
 @endsection
 @push('script')
-    {{-- <script src="{{asset('admin/assets/bundles/summernote/summernote-bs4.js')}}"></script>
-  <script src="{{asset('admin/assets/bundles/codemirror/lib/codemirror.js')}}"></script>
-  <script src="{{asset('admin/assets/bundles/codemirror/mode/javascript/javascript.js')}}"></script>
-  <script src="{{asset('admin/assets/bundles/jquery-selectric/jquery.selectric.min.js')}}"></script>
-  <script src="{{asset('admin/assets/bundles/ckeditor/ckeditor.js')}}"></script>
-  <!-- Page Specific JS File -->
-  <script src="{{asset('admin/assets/js/page/ckeditor.js')}}"></script> --}}
+    <script src="{{ assets('admin/assets/tinymce/tinymce.min.js') }}"></script>
+    <script>
+        // Simple version for debugging
+        tinymce.init({
+            selector: 'textarea#message',
+            height: 300,
+            plugins: 'image',
+            toolbar: 'undo redo | bold italic | image',
+            branding: false,
+
+            images_upload_handler: function (blobInfo, success, failure) {
+                console.log('Upload handler called');
+                console.log('File info:', {
+                    name: blobInfo.filename(),
+                    size: blobInfo.blob().size,
+                    type: blobInfo.blob().type
+                });
+
+                // Simple validation
+                if (blobInfo.blob().size > 5000000) {
+                    failure('File too large');
+                    return;
+                }
+
+                // Get CSRF token
+                const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                console.log('CSRF token:', token);
+
+                // Create form data
+                const formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+                // Create request
+                const xhr = new XMLHttpRequest();
+
+                // Handle response
+                xhr.onreadystatechange = function() {
+                    console.log('ReadyState:', xhr.readyState, 'Status:', xhr.status);
+
+                    if (xhr.readyState === 4) {
+                        console.log('Response text:', xhr.responseText);
+
+                        if (xhr.status === 200) {
+                            try {
+                                const data = JSON.parse(xhr.responseText);
+                                console.log('Parsed data:', data);
+
+                                if (data.location) {
+                                    success(data.location);
+                                } else {
+                                    failure('No location in response');
+                                }
+                            } catch (e) {
+                                console.error('Parse error:', e);
+                                failure('Invalid JSON response');
+                            }
+                        } else {
+                            failure('HTTP Error: ' + xhr.status);
+                        }
+                    }
+                };
+
+                xhr.onerror = function() {
+                    console.error('Network error');
+                    failure('Network error');
+                };
+
+                // Open and send
+                xhr.open('POST', '/upload-tinymce-image');
+                if (token) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', token);
+                }
+                xhr.send(formData);
+            }
+        });
+    </script>
 @endpush

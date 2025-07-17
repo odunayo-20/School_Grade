@@ -10,24 +10,7 @@
                 </div>
                 <div class="modal-body">
                     <form wire:submit.prevent="storeSubject">
-                        <div class="mb-3">
-                                <div class="form-group">
-                                    <label>Class</label>
-                                    <select wire:model.defer="class" id="" class="form-select">
-                                        <option value="">--Select Class--</option>
-                                        @forelse ($classes as $class)
-                                            <option value="{{ $class->id }}">{{ $class->name }}</option>
-
-                                        @empty
-                                        <option>No Record</option>
-
-                                        @endforelse
-                                    </select>
-                                    @error('class')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                        </div>
+                  
                         <div class="mb-3">
                             <label for="">Name</label>
                             <input type="text" wire:model.defer="name" class="form-control">
@@ -76,22 +59,7 @@
 
                 <div class="modal-body">
                         <form wire:submit.prevent="updateSubject">
-                            <div class="mb-3">
-                                <div class="form-group">
-                                    <label>Class</label>
-                                    <select wire:model="class" id="" class="form-select">
-                                        <option value="">--Select Class--</option>
-                                        @forelse ($classes as $class)
-                                        <option value="{{$class->id}}">{{$class->name}}</option>
-                                        @empty
 
-                                        @endforelse
-                                    </select>
-                                    @error('class')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                        </div>
                             <div class="mb-3">
                                 <label for="">Name</label>
                                 <input type="text" wire:model.defer="name" class="form-control">

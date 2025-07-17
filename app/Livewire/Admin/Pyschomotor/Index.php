@@ -61,7 +61,7 @@ class Index extends Component
         ]);
 
         if ($this->selectedClass && $this->selectedSession) {
-            $this->students = Student::where('class_id', $this->selectedClass)->where('schoolsession_id', $this->selectedSession)->get();
+            $this->students = Student::where('current_class_id', $this->selectedClass)->where('schoolsession_id', $this->selectedSession)->get();
             $this->loadMarks();
         } else {
             $this->students = [];

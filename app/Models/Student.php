@@ -8,6 +8,8 @@ class Student extends Model
 {
     protected $guarded = [];
 
+    protected $connection = 'mysql2';
+    protected $table = 'students';
 
     public function student()
 {

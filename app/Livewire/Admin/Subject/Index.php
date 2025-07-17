@@ -16,13 +16,11 @@ class Index extends Component
 
 public function storeSubject(){
     $this->validate([
-        'class' => 'required|integer',
         'name' => 'required|string',
         'code' => 'required|string',
     ]);
 
     Subject::create([
-        'class_id' => $this->class,
         'name' => $this->name,
         'code' => $this->code,
         'status' => $this->status == true ? '1': '0',
@@ -37,7 +35,6 @@ public function storeSubject(){
 public function editSubject(Subject $subject){
 
     $this->subject = $subject;
-$this->class = $subject->class_id;
 $this->name = $subject->name;
 $this->code = $subject->code;
 $this->status = $subject->status == '1' ? true : false;
@@ -47,13 +44,11 @@ $this->status = $subject->status == '1' ? true : false;
 
 public function updateSubject(){
     $this->validate([
-        'class' => 'required',
         'name' => 'required|string',
         'code' => 'required|string',
     ]);
 
     $this->subject->update([
-        'class_id' => $this->class,
         'name' => $this->name,
         'code' => $this->code,
         'status' => $this->status == true ? '1' : '0',

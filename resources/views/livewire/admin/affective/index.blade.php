@@ -53,7 +53,7 @@
             <tbody>
                 @foreach ($students as $student)
                     <tr>
-                        <td>{{ $student->first_name }} {{ $student->last_name }}</td>
+                        <td>{{ $student->firstname }} {{ $student->lastname }}</td>
 
                         @foreach (['Punctuality', 'Perseverance', 'Responsibility', 'Diligence', 'Self Control', 'Neatness', 'Honesty', 'Reliability', 'Attendance', 'Initiative', 'Organization Ability', 'Attentiveness', 'Co-operativeness', 'Curiosity', 'Creativity'] as $workType)
                             <td>
@@ -81,7 +81,7 @@
             <button type="button" class="btn btn-success" wire:click="saveAllMarks">Save All</button>
         </div>
     @else
-        <p class="text-center text-muted mt-4">No students found. Please select a class and session.</p>
+        <p class="mt-4 text-center text-muted">No students found. Please select a class and session.</p>
     @endif
 
     <!-- Flash Messages -->

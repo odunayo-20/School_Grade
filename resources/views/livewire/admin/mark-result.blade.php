@@ -60,7 +60,7 @@
             <tbody>
                 @foreach ($students as $student)
                     <tr>
-                        <td>{{ $student->first_name }} {{ $student->last_name }}</td>
+                        <td>{{ $student->firstname }} {{ $student->lastname }}</td>
                         @foreach ($subjects as $subject)
                             <td>
                                 @foreach (['CA', 'Exam'] as $workType)

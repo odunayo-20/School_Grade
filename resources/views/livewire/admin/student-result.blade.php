@@ -201,10 +201,10 @@
     <table class="details-table">
         <tr>
             <th>Name:</th>
-            <td style="font-size:bold; text-transform: capitalize;"> {{ $student->first_name }} {{ $student->last_name }}
+            <td style="font-size:bold; text-transform: capitalize;"> {{ $student->firstname }} {{ $student->lastname }}
             </td>
             <th>Registration No:</th>
-            <td style="font-size:bold; text-transform: capitalize;"> {{ $student->register_number }}</td>
+            <td style="font-size:bold; text-transform: capitalize;"> {{ $student->reg_number }}</td>
             <th>Times School Opened:</th>
             <td>
                 @if ($totals)
@@ -336,7 +336,7 @@ $studentRank = isset($positionMap[$student->id]) ? ordinal($positionMap[$student
 
 
                 <tr>
-                    <td style="text-transform:uppercase;">{{ $subject->name }}</td>
+                    <td style="text-transform:uppercase;">{{ $subject->subject->name }}</td>
                     <td>{{ $CA }}</td>
                     <td>{{ $exam }}</td>
 

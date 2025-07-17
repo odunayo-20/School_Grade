@@ -11,6 +11,9 @@ class SchoolSession extends Model
     use HasFactory;
 
     protected $guarded = [];
+    protected $connection = 'mysql';
+protected $table = 'school_sessions';
+
 
     public function session(){
         return $this->hasMany(SchoolSession::class);

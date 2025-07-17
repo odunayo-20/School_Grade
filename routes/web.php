@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\CircularController;
 use App\Http\Controllers\Admin\ResultController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\SubjectController;
@@ -59,11 +60,23 @@ Route::get('resumption', App\Livewire\Admin\Resumption\Index::class)->name('admi
 Route::get('class', App\Livewire\Admin\Class\Index::class)->name('admin.class');
 Route::get('semester', App\Livewire\Admin\Semester\Index::class)->name('admin.semester');
 Route::get('session', App\Livewire\Admin\Sessions\Index::class)->name('admin.session');
+// Route::get('circular', App\Livewire\Admin\Circular\Index::class)->name('admin.circular');
+
+Route::get('circular', [CircularController::class, 'index'])->name('admin.circular');
+Route::get('circular/create', [CircularController::class, 'create'])->name('admin.circular.create');
+Route::post('circular/store', [CircularController::class, 'store'])->name('admin.circular.store');
+Route::get('circular/show/{id}', [CircularController::class, 'show'])->name('admin.circular.show');
+
+Route::get('past-question', App\Livewire\Admin\PastQuestion\Index::class)->name('admin.past-question');
 Route::get('total_attendances', App\Livewire\Admin\TotalAttendances\Index::class)->name('admin.total_attendances');
 
 Route::get('result-table', [ResultTableController::class, 'index'])->name('admin.result-table');
 // Route::get('subject', [SubjectController::class, 'index'])->name('admin.subject');
 
+
+
 });
+
+Route::post('/upload-tinymce-image', [App\Http\Controllers\TinyMCEController::class, 'upload']);
 
 // Route::get('/product', [ProductController::class, 'removeImage'])->name('admin.product.delete.image');
