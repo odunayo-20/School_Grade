@@ -1,4 +1,5 @@
-@extends('layouts.admin-app')
+@extends('Layouts.auth-layout')
+
 
 @section('content')
 <!-- Main Content start -->

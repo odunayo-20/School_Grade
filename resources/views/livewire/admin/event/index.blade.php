@@ -100,9 +100,9 @@
                     <td>{{ $event->date }}</td>
                                 <td>{{ $event->time }}</td>
                                 <td>
-                                    <a href="{{ url('admin/event/view/'.$event->id) }}" class="btn btn-sm btn-warning"><i
+                                    <a href="{{ url('admin/event/view/'.$event->slug) }}" class="btn btn-sm btn-warning"><i
                                         class="fa fa-eye"></i></a>
-                                    <a href="{{ url('admin/event/edit/'.$event->id) }}" class="btn btn-sm btn-primary"><i
+                                    <a href="{{ url('admin/event/edit/'.$event->slug) }}" class="btn btn-sm btn-primary"><i
                                         class="fa fa-pen"></i></a>
 
                                     <a href="#" wire:click='delete({{ $event->id }})' data-bs-toggle="modal" data-bs-target="#deleteModal" class="btn btn-sm btn-danger"><i
@@ -140,4 +140,3 @@
           });
           </script>
       @endpush
-  

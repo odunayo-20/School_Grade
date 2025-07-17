@@ -47,6 +47,19 @@
           <a href="{{route('admin.circular')}}" class="nav-link"><i data-feather="mail"></i><span>Circular</span></a>
           <a href="{{route('admin.past-question')}}" class="nav-link"><i data-feather="mail"></i><span>Past Question</span></a>
 
+          <li class="dropdown @if(Request::segment(2) == 'event') active @endif">
+            <a href="{{ route('admin_event')}}" class=" nav-link"><i
+                data-feather="briefcase"></i><span>Event</span></a>
+          </li>
+          <li class="dropdown @if(Request::segment(2) == 'news') active @endif">
+            <a href="{{ route('admin_news')}}" class=" nav-link"><i
+                data-feather="briefcase"></i><span>News</span></a>
+          </li>
+          <li class="dropdown @if(Request::segment(2) == 'timetable') active @endif">
+            <a href="{{ route('admin_timetable')}}" class=" nav-link"><i
+                data-feather="briefcase"></i><span>Timetable</span></a>
+          </li>
+
         </li>
 
 

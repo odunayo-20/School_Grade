@@ -54,6 +54,7 @@
 </div>
 </body>
 
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
 <script src="{{asset('admin/assets/js/app.min.js')}}"></script>
 <!-- JS Libraies -->

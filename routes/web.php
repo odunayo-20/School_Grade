@@ -2,13 +2,16 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\TinyMCEController;
 use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\CircularController;
+use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\ResultController;
+use App\Http\Controllers\MarkRegisterController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\SubjectController;
+use App\Http\Controllers\Admin\CircularController;
 use App\Http\Controllers\Admin\ResultTableController;
-use App\Http\Controllers\MarkRegisterController;
 
 Route::middleware(['guest'])->group( function (){
 
@@ -69,14 +72,29 @@ Route::get('circular/show/{id}', [CircularController::class, 'show'])->name('adm
 
 Route::get('past-question', App\Livewire\Admin\PastQuestion\Index::class)->name('admin.past-question');
 Route::get('total_attendances', App\Livewire\Admin\TotalAttendances\Index::class)->name('admin.total_attendances');
+Route::get('timetable', App\Livewire\Admin\Timetable\Index::class)->name('admin_timetable');
 
 Route::get('result-table', [ResultTableController::class, 'index'])->name('admin.result-table');
 // Route::get('subject', [SubjectController::class, 'index'])->name('admin.subject');
 
+Route::get('/event', [EventController::class, 'index'])->name('admin_event');
+Route::get('/event/create', [EventController::class, 'create'])->name('admin_event_create');
+Route::post('/event/store', [EventController::class, 'store'])->name('admin_event_store');
+Route::get('/event/edit/{event}', [EventController::class, 'edit'])->name('admin_event_edit');
+Route::post('/event/update/{event}', [EventController::class, 'update'])->name('admin_event_update');
+Route::get('/event/view/{event}', [EventController::class, 'view'])->name('admin_event_view');
+Route::get('/news', [NewsController::class, 'index'])->name('admin_news');
+Route::get('/news/create', [NewsController::class, 'create'])->name('admin_news_create');
+Route::post('/news/store', [NewsController::class, 'store'])->name('admin_news_store');
+Route::get('/news/edit/{news}', [NewsController::class, 'edit'])->name('admin_news_edit');
+Route::post('/news/update/{news}', [NewsController::class, 'update'])->name('admin_news_update');
+Route::get('/news/view/{event}', [NewsController::class, 'view'])->name('admin_news_view');
 
 
 });
 
-Route::post('/upload-tinymce-image', [App\Http\Controllers\TinyMCEController::class, 'upload']);
+// Route::post('/upload-tinymce-image', [App\Http\Controllers\TinyMCEController::class, 'upload']);
+Route::post('/upload-tinymce-image', [TinyMCEController::class, 'uploadTinyMCEImage']);
+
 
 // Route::get('/product', [ProductController::class, 'removeImage'])->name('admin.product.delete.image');

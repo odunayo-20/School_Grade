@@ -11,10 +11,10 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4>Write Your Event Post</h4>
+                                <h4>Edit Your Event Post</h4>
                             </div>
                             <div class="card-body">
-                                <form action="{{ route('admin_event_store') }}" method="POST" enctype="multipart/form-data">
+                                <form action="{{ route('admin_event_update', $event->slug) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
 
                                     <!-- Title -->
@@ -22,7 +22,7 @@
                                         <label class="col-form-label col-md-12">Title</label>
                                         <div class="col-md-12">
                                             <input name="title" type="text" class="form-control"
-                                                value="{{ old('title') }}">
+                                                value="{{ old('title') ?? $event->title }}">
                                             @error('title')
                                                 <span class="mt-1 text-danger d-block">{{ $message }}</span>
                                             @enderror
@@ -33,7 +33,8 @@
                                     <div class="mb-4 form-group row">
                                         <label class="col-form-label col-md-12">Image</label>
                                         <div class="col-sm-12 col-md-12">
-                                            <input name="image" type="file" class="form-control">
+                                            <input name="new_image" type="file" class="form-control">
+                                            <input name="old_image" type="hidden" value="{{ $event->image }}" class="form-control">
                                             @error('image')
                                                 <span class="mt-1 text-danger d-block">{{ $message }}</span>
                                             @enderror
@@ -45,7 +46,7 @@
                                         <label class="col-form-label col-md-12">Date</label>
                                         <div class="col-sm-12 col-md-12">
                                             <input name="date" type="date" class="form-control"
-                                                value="{{ old('date') }}">
+                                                value="{{ old('date') ?? $event->date }}">
                                             @error('date')
                                                 <span class="mt-1 text-danger d-block">{{ $message }}</span>
                                             @enderror
@@ -57,7 +58,7 @@
                                         <label class="col-form-label col-md-12">Time</label>
                                         <div class="col-sm-12 col-md-12">
                                             <input name="time" type="time" class="form-control"
-                                                value="{{ old('time') }}">
+                                                value="{{ old('time') ?? $event->time }}">
                                             @error('time')
                                                 <span class="mt-1 text-danger d-block">{{ $message }}</span>
                                             @enderror
@@ -69,7 +70,7 @@
                                         <label class="col-form-label col-md-12">Location</label>
                                         <div class="col-sm-12 col-md-12">
                                             <input name="location" type="text" class="form-control"
-                                                value="{{ old('location') }}">
+                                                value="{{ old('location') ?? $event->location }}">
                                             @error('location')
                                                 <span class="mt-1 text-danger d-block">{{ $message }}</span>
                                             @enderror
@@ -79,7 +80,7 @@
                                     <div class="mb-4 form-group row">
                                         <label class="col-form-label col-md-12">Message</label>
                                         <div class="col-sm-12 col-md-12">
-                                            <textarea name="message" id="message" class="form-control" rows="10">{{ old('message') }}</textarea>
+                                            <textarea name="message" id="message" class="form-control" rows="10">{{ old('message') ??  $event->content }}</textarea>
                                             @error('message')
                                                 <span class="mt-1 text-danger d-block">{{ $message }}</span>
                                             @enderror
@@ -107,7 +108,7 @@
 
 @push('script')
     <script src="{{ asset('admin/assets/tinymce/tinymce.min.js') }}" referrerpolicy="origin"></script>
-  
+
 
 
 

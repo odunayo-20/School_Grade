@@ -14,8 +14,8 @@
                                 <div class="card-header">
                                     <div class="w-100">
                                         <h4 style="float: left; width:50%; display:inline;">Circular Create</h4>
-                                        <h4 style="float: right; width:50%; display:inline; text-align: right" >
-                                            <a href="{{route('admin.student')}}" class="btn btn-danger">Back</a>
+                                        <h4 style="float: right; width:50%; display:inline; text-align: right">
+                                            <a href="{{ route('admin.student') }}" class="btn btn-danger">Back</a>
                                         </h4>
                                     </div>
 
@@ -69,7 +69,8 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label>File</label>
-                                                <input type="file" value="{{old('attachment')}}" name="attachment" class="form-control">
+                                                <input type="file" value="{{ old('attachment') }}" name="attachment"
+                                                    class="form-control">
                                                 @error('attachment')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -78,7 +79,8 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label>circular date</label>
-                                                <input type="date" value="{{old('circular_date')}}" name="circular_date" class="form-control">
+                                                <input type="date" value="{{ old('circular_date') }}"
+                                                    name="circular_date" class="form-control">
                                                 @error('circular_date')
                                                     <span class="text-danger">{{ $message }}</span>
                                                 @enderror
@@ -87,14 +89,14 @@
 
                                     </div>
 
-                                  <div class="row">
-                                    <textarea name="message" id="message" cols="30" rows="10"></textarea>
-                                  </div>
+                                    <div class="row">
+                                        <textarea name="message" id="message" cols="30" rows="10"></textarea>
+                                    </div>
 
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="">Status</label>
-                                            <input type="checkbox" value="{{old('status')}}" name="status"
+                                            <input type="checkbox" value="{{ old('status') }}" name="status"
                                                 class="form-input-check form-input-check-lg">
                                         </div>
                                     </div>
@@ -115,161 +117,160 @@
 
 @endsection
 @push('script')
-
-<script src="{{ asset('admin/assets/tinymce/tinymce.min.js') }}" referrerpolicy="origin"></script>
-
+    <script src="{{ asset('admin/assets/tinymce/tinymce.min.js') }}" referrerpolicy="origin"></script>
 
 
-<script>
-    // Get CSRF token
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-    // Initialize TinyMCE
-    tinymce.init({
-        selector: 'textarea#message',
-        height: 400,
-        menubar: false,
-        plugins: [
-            'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-            'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'media', 'table', 'help', 'wordcount'
-        ],
-        toolbar: 'undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media table | removeformat help',
-        branding: false,
-        automatic_uploads: true,
-        file_picker_types: 'image',
-        paste_data_images: true,
+    <script>
+        // Get CSRF token
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
-        // Content filtering
-        valid_elements: 'p[style],strong,em,u,s,a[href|target],ul,ol,li,br,img[src|alt|width|height|style],table[border|style],tr,td[colspan|rowspan|style],th[colspan|rowspan|style],h1,h2,h3,h4,h5,h6,blockquote,code,pre',
+        // Initialize TinyMCE
+        tinymce.init({
+            selector: 'textarea#message',
+            height: 400,
+            menubar: false,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media table | removeformat help',
+            branding: false,
+            automatic_uploads: true,
+            file_picker_types: 'image',
+            paste_data_images: true,
 
-        // Image upload configuration
-        images_upload_handler: function (blobInfo, success, failure, progress) {
-            const xhr = new XMLHttpRequest();
-            xhr.withCredentials = false;
-            xhr.open('POST', '/upload-tinymce-image');
+            // Content filtering
+            valid_elements: 'p[style],strong,em,u,s,a[href|target],ul,ol,li,br,img[src|alt|width|height|style],table[border|style],tr,td[colspan|rowspan|style],th[colspan|rowspan|style],h1,h2,h3,h4,h5,h6,blockquote,code,pre',
 
-            // Set timeout
-            xhr.timeout = 30000;
+            // Image upload configuration
+            images_upload_handler: function(blobInfo, success, failure, progress) {
+                const xhr = new XMLHttpRequest();
+                xhr.withCredentials = false;
+                xhr.open('POST', '/upload-tinymce-image');
 
-            // Progress tracking
-            xhr.upload.onprogress = function(e) {
-                if (e.lengthComputable) {
-                    const percentComplete = (e.loaded / e.total) * 100;
-                    progress(percentComplete);
-                }
-            };
+                // Set timeout
+                xhr.timeout = 30000;
 
-
-            xhr.onload = function() {
-                let json;
-
-                try {
-                    if (xhr.status !== 200) {
-                        failure('HTTP Error: ' + xhr.status + ' - ' + xhr.statusText);
-                        return;
+                // Progress tracking
+                xhr.upload.onprogress = function(e) {
+                    if (e.lengthComputable) {
+                        const percentComplete = (e.loaded / e.total) * 100;
+                        progress(percentComplete);
                     }
+                };
 
-                    json = JSON.parse(xhr.responseText);
-                    console.log('Upload response:', json);
 
-                    if (!json || !json.location) {
-                        failure('Invalid response: Missing location property');
-                        return;
+                xhr.onload = function() {
+                    let json;
+
+                    try {
+                        if (xhr.status !== 200) {
+                            failure('HTTP Error: ' + xhr.status + ' - ' + xhr.statusText);
+                            return;
+                        }
+
+                        json = JSON.parse(xhr.responseText);
+                        console.log('Upload response:', json);
+
+                        if (!json || !json.location) {
+                            failure('Invalid response: Missing location property');
+                            return;
+                        }
+
+                        success(json.location);
+
+                    } catch (e) {
+                        console.error('JSON parse error:', e);
+                        failure('Invalid JSON response: ' + xhr.responseText);
                     }
+                };
 
-                    success(json.location);
+                xhr.onerror = function() {
+                    failure('Network error: Unable to upload image');
+                };
 
-                } catch (e) {
-                    console.error('JSON parse error:', e);
-                    failure('Invalid JSON response: ' + xhr.responseText);
+                xhr.ontimeout = function() {
+                    failure('Upload timeout: Please try again');
+                };
+
+                xhr.onabort = function() {
+                    failure('Upload aborted');
+                };
+
+                // Validate file before upload
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+                if (blobInfo.blob().size > maxSize) {
+                    failure('File too large. Maximum size is 5MB');
+                    return;
                 }
-            };
 
-            xhr.onerror = function() {
-                failure('Network error: Unable to upload image');
-            };
-
-            xhr.ontimeout = function() {
-                failure('Upload timeout: Please try again');
-            };
-
-            xhr.onabort = function() {
-                failure('Upload aborted');
-            };
-
-            // Validate file before upload
-            const maxSize = 5 * 1024 * 1024; // 5MB
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-
-            if (blobInfo.blob().size > maxSize) {
-                failure('File too large. Maximum size is 5MB');
-                return;
-            }
-
-            if (!allowedTypes.includes(blobInfo.blob().type)) {
-                failure('Invalid file type. Please upload JPG, PNG, GIF, or WebP images');
-                return;
-            }
-
-            // Create form data
-            const formData = new FormData();
-            formData.append('file', blobInfo.blob(), blobInfo.filename());
-
-            // Add CSRF token
-            if (csrfToken) {
-                xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
-            }
-
-            // Send request
-            xhr.send(formData);
-        },
-
-        // File picker for additional file types
-        file_picker_callback: function(callback, value, meta) {
-            const input = document.createElement('input');
-            input.setAttribute('type', 'file');
-            input.setAttribute('accept', 'image/*');
-
-            input.onchange = function() {
-                const file = this.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function() {
-                        callback(reader.result, {
-                            alt: file.name
-                        });
-                    };
-                    reader.readAsDataURL(file);
+                if (!allowedTypes.includes(blobInfo.blob().type)) {
+                    failure('Invalid file type. Please upload JPG, PNG, GIF, or WebP images');
+                    return;
                 }
-            };
 
-            input.click();
-        },
+                // Create form data
+                const formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename());
 
-        // Setup callback
-        setup: function(editor) {
-            editor.on('init', function() {
-                console.log('TinyMCE initialized successfully');
-            });
+                // Add CSRF token
+                if (csrfToken) {
+                    xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken);
+                }
 
-            editor.on('change', function() {
-                editor.save(); // Save to textarea
-            });
+                // Send request
+                xhr.send(formData);
+            },
 
-            editor.on('ImageUploadError', function(e) {
-                console.error('Image upload error:', e);
-                showStatus('Image upload failed: ' + e.message, 'error');
-            });
+            // File picker for additional file types
+            file_picker_callback: function(callback, value, meta) {
+                const input = document.createElement('input');
+                input.setAttribute('type', 'file');
+                input.setAttribute('accept', 'image/*');
 
-            editor.on('ImageUploadSuccess', function(e) {
-                console.log('Image uploaded successfully:', e);
-                showStatus('Image uploaded successfully', 'success');
-            });
-        },
+                input.onchange = function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function() {
+                            callback(reader.result, {
+                                alt: file.name
+                            });
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                };
 
-        // Content style
-        content_style: `
+                input.click();
+            },
+
+            // Setup callback
+            setup: function(editor) {
+                editor.on('init', function() {
+                    console.log('TinyMCE initialized successfully');
+                });
+
+                editor.on('change', function() {
+                    editor.save(); // Save to textarea
+                });
+
+                editor.on('ImageUploadError', function(e) {
+                    console.error('Image upload error:', e);
+                    showStatus('Image upload failed: ' + e.message, 'error');
+                });
+
+                editor.on('ImageUploadSuccess', function(e) {
+                    console.log('Image uploaded successfully:', e);
+                    showStatus('Image uploaded successfully', 'success');
+                });
+            },
+
+            // Content style
+            content_style: `
             body {
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 font-size: 14px;
@@ -281,91 +282,87 @@
             }
         `,
 
-        // Paste settings
-        paste_as_text: false,
-        paste_auto_cleanup_on_paste: true,
-        paste_remove_spans: true,
-        paste_remove_styles: false,
-        paste_remove_styles_if_webkit: true,
-        paste_strip_class_attributes: 'all',
+            // Paste settings
+            paste_as_text: false,
+            paste_auto_cleanup_on_paste: true,
+            paste_remove_spans: true,
+            paste_remove_styles: false,
+            paste_remove_styles_if_webkit: true,
+            paste_strip_class_attributes: 'all',
 
-        // Additional settings
-        resize: true,
-        statusbar: true,
-        elementpath: false,
-        convert_urls: false,
-        remove_script_host: false,
-        relative_urls: false
-    });
-
-    // Form submission handler
-    document.getElementById('editorForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        // Get editor content
-        const content = tinymce.get('message').getContent();
-        const title = document.getElementById('title').value;
-
-        // Validate
-        if (!title.trim()) {
-            showStatus('Title is required', 'error');
-            return;
-        }
-
-        if (!content.trim()) {
-            showStatus('Content is required', 'error');
-            return;
-        }
-
-        // Submit form data
-        const formData = new FormData();
-        formData.append('title', title);
-        formData.append('message', content);
-
-        fetch('/submit-form', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': csrfToken
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showStatus('Form submitted successfully!', 'success');
-                // Reset form
-                document.getElementById('title').value = '';
-                tinymce.get('message').setContent('');
-            } else {
-                showStatus('Error: ' + (data.message || 'Unknown error'), 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Submission error:', error);
-            showStatus('Network error: Unable to submit form', 'error');
+            // Additional settings
+            resize: true,
+            statusbar: true,
+            elementpath: false,
+            convert_urls: false,
+            remove_script_host: false,
+            relative_urls: false
         });
-    });
 
-    // Status message helper
-    function showStatus(message, type) {
-        const statusDiv = document.getElementById('status');
-        statusDiv.className = type;
-        statusDiv.textContent = message;
+        // Form submission handler
+        document.getElementById('editorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
 
-        // Auto-hide after 5 seconds
-        setTimeout(() => {
-            statusDiv.textContent = '';
-            statusDiv.className = '';
-        }, 5000);
-    }
+            // Get editor content
+            const content = tinymce.get('message').getContent();
+            const title = document.getElementById('title').value;
 
-    // Clean up on page unload
-    window.addEventListener('beforeunload', function() {
-        tinymce.remove();
-    });
-</script>
+            // Validate
+            if (!title.trim()) {
+                showStatus('Title is required', 'error');
+                return;
+            }
 
+            if (!content.trim()) {
+                showStatus('Content is required', 'error');
+                return;
+            }
 
+            // Submit form data
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('message', content);
 
+            fetch('/submit-form', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showStatus('Form submitted successfully!', 'success');
+                        // Reset form
+                        document.getElementById('title').value = '';
+                        tinymce.get('message').setContent('');
+                    } else {
+                        showStatus('Error: ' + (data.message || 'Unknown error'), 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Submission error:', error);
+                    showStatus('Network error: Unable to submit form', 'error');
+                });
+        });
 
+        // Status message helper
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = type;
+            statusDiv.textContent = message;
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                statusDiv.textContent = '';
+                statusDiv.className = '';
+            }, 5000);
+        }
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', function() {
+            tinymce.remove();
+        });
+    </script>
 @endpush

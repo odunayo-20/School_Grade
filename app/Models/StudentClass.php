@@ -10,9 +10,9 @@ class StudentClass extends Model
     /** @use HasFactory<\Database\Factories\StudentClassFactory> */
     use HasFactory;
 
-    protected $guarded = [];
-    protected $connection = 'mysql2';
-    protected $table = 'classes';
+    public $guarded = [];
+    public $connection = 'mysql2';
+    public $table = 'classes';
 
     public function class(){
         return $this->hasMany(StudentClass::class, 'class_id');

@@ -2,112 +2,124 @@
 
 
 @section('content')
-    <!-- Main Content start -->
     <div class="main-content">
+        <!-- section start -->
         <section class="section">
             <div class="section-body">
-                <!-- Form Card Start -->
+                <!-- add content start here -->
+
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4>Write Your Event Post</h4>
+                                <h4>Write Your News Post</h4>
                             </div>
                             <div class="card-body">
-                                <form action="{{ route('admin_event_store') }}" method="POST" enctype="multipart/form-data">
+                                <form action="{{ route('admin_news_update', $news->slug)  }}" method="POST" enctype="multipart/form-data">
                                     @csrf
-
-                                    <!-- Title -->
                                     <div class="mb-4 form-group row">
                                         <label class="col-form-label col-md-12">Title</label>
                                         <div class="col-md-12">
-                                            <input name="title" type="text" class="form-control"
-                                                value="{{ old('title') }}">
+                                            <input name='title' type="text" value="{{ old('title') ?? $news->title }}" class="form-control">
                                             @error('title')
-                                                <span class="mt-1 text-danger d-block">{{ $message }}</span>
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="mb-4 form-group row">
+                                        <label class="col-form-label col-md-12">Subtitle</label>
+                                        <div class="col-md-12">
+                                            <input name='subtitle' value="{{ old('subtitle') ?? $news->subtitle }}" type="text" class="form-control">
+                                            @error('subtitle')
+                                                <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
                                     </div>
 
-                                    <!-- Image -->
+                                    <div class="mb-4 form-group row">
+                                        <label class="col-form-label col-md-12">Summary in sentence</label>
+                                        <div class="col-md-12">
+                                            <input name='summary' value="{{ old('summary') ?? $news->summary}}" type="text" class="form-control">
+                                            @error('summary')
+                                                <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+
                                     <div class="mb-4 form-group row">
                                         <label class="col-form-label col-md-12">Image</label>
-                                        <div class="col-sm-12 col-md-12">
-                                            <input name="image" type="file" class="form-control">
-                                            @error('image')
-                                                <span class="mt-1 text-danger d-block">{{ $message }}</span>
+                                        <div class="col-md-12">
+                                            <input name='new_image' type="file" value="{{ old('new_image') }}" class="form-control">
+                                            <input name='old_image' type="hidden" value="{{ $news->image }}" class="form-control">
+
+                                            @error('new_image')
+                                                <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
+
                                     </div>
 
-                                    <!-- Date -->
+
                                     <div class="mb-4 form-group row">
                                         <label class="col-form-label col-md-12">Date</label>
-                                        <div class="col-sm-12 col-md-12">
-                                            <input name="date" type="date" class="form-control"
-                                                value="{{ old('date') }}">
+                                        <div class="col-md-12">
+                                            <input name='date' type="date" value="{{ old('date') ?? $news->date }}" class="form-control">
                                             @error('date')
-                                                <span class="mt-1 text-danger d-block">{{ $message }}</span>
+                                                <span class="text-danger">{{ $message }}</span>
                                             @enderror
+
                                         </div>
                                     </div>
-
-                                    <!-- Time -->
                                     <div class="mb-4 form-group row">
                                         <label class="col-form-label col-md-12">Time</label>
-                                        <div class="col-sm-12 col-md-12">
-                                            <input name="time" type="time" class="form-control"
-                                                value="{{ old('time') }}">
+                                        <div class="col-md-12">
+                                            <input name='time' type="time" value="{{ old('time') ?? $news->time }}" class="form-control">
                                             @error('time')
-                                                <span class="mt-1 text-danger d-block">{{ $message }}</span>
+                                                <span class="text-danger">{{ $message }}</span>
                                             @enderror
+
                                         </div>
                                     </div>
 
-                                    <!-- Location -->
                                     <div class="mb-4 form-group row">
-                                        <label class="col-form-label col-md-12">Location</label>
-                                        <div class="col-sm-12 col-md-12">
-                                            <input name="location" type="text" class="form-control"
-                                                value="{{ old('location') }}">
-                                            @error('location')
-                                                <span class="mt-1 text-danger d-block">{{ $message }}</span>
+                                        <label class="col-form-label col-md-12">Content</label>
+                                        <div class="col-md-12">
+                                            <textarea id="message" rows="10" name='content' value="{{ old('content') }}" class="form-control">{{ old('content') ?? $news->content }}</textarea>
+                                            @error('content')
+                                                <span class="text-danger">{{ $message }}</span>
                                             @enderror
-                                        </div>
-                                    </div>
-                                    <!-- Message -->
-                                    <div class="mb-4 form-group row">
-                                        <label class="col-form-label col-md-12">Message</label>
-                                        <div class="col-sm-12 col-md-12">
-                                            <textarea name="message" id="message" class="form-control" rows="10">{{ old('message') }}</textarea>
-                                            @error('message')
-                                                <span class="mt-1 text-danger d-block">{{ $message }}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
 
-                                    <!-- Submit Button -->
+                                        </div>
+                                    </div>
                                     <div class="mb-4 form-group row">
-                                        <div class="col-sm-12 offset-md-3 col-md-12">
-                                            <button type="submit" class="btn btn-primary">Create Post</button>
+
+                                        <div class="col-md-12">
+                                            <button class="btn btn-primary">Create Post</button>
                                         </div>
                                     </div>
                                 </form>
-                            </div> <!-- card-body -->
-                        </div> <!-- card -->
-                    </div> <!-- col -->
-                </div> <!-- row -->
-                <!-- Form Card End -->
-            </div>
-        </section>
-    </div>
-    <!-- Main Content end -->
-@endsection
+                            </div>
 
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+            <!-- add content stop here-->
+    </div>
+
+    </section>
+    <!-- section stop -->
+
+    </div>
+    <!-- Main content stop -->
+@endsection
 
 @push('script')
     <script src="{{ asset('admin/assets/tinymce/tinymce.min.js') }}" referrerpolicy="origin"></script>
-  
+
 
 
 

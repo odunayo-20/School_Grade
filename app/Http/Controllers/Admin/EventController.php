@@ -71,12 +71,42 @@ class EventController extends Controller
 
 
 
+    public function edit($event)
+    {
+        $event = ExternalEvent::where('slug', $event)->first();
+        return view('admin.event.edit', compact('event'));
+    }
 
+    public function update(Request $request, $event)
+    {
+        $event = ExternalEvent::where('slug', $event)->first();
+
+        if (!empty($request->new_image)) {
+            if (Storage::disk('public')->exists($request->old_image)) {
+                Storage::disk('public')->delete($request->old_image);
+            }
+            $filePath = $request->new_image->store('events', 'public');
+        } else {
+            $filePath = $request->old_image;
+        }
+
+        $event->title = $request->title;
+        $event->slug = Str::slug($request->title);
+        $event->location = $request->location;
+        $event->content = $request->message;
+        $event->time = $request->time;
+        $event->date = $request->date;
+        $event->image = $filePath;
+        $event->update();
+        session()->flash('success', 'Event Successfully Updated');
+        return redirect(route('admin_event'));
+
+    }
 
 
     public function view($event)
     {
-        $event = ExternalEvent::findOrFail($event);
+        $event = ExternalEvent::where('slug', $event)->first();
         return view('admin.event.view', compact('event'));
     }
 }
